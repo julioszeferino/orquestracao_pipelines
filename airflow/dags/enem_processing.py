@@ -14,7 +14,7 @@ s3client = boto3.client("s3", aws_access_key_id=aws_access_key_id,
                           aws_secret_access_key=aws_secret_access_key)
 
 
-# Usando a novíssima Taskflow API
+# Usando a Taskflow API
 default_args = {
     'owner': 'Julio Zeferino',
     "depends_on_past": False,
@@ -119,7 +119,7 @@ def pipeline_enem():
                 }
             }],
         )
-        return cluster_id["JobFlowId"]
+        return cluster_id["JobFlowId"] # retorna o id do cluster
 
 
     @task
@@ -195,3 +195,6 @@ def pipeline_enem():
 
 
 execucao = pipeline_enem()
+
+
+
