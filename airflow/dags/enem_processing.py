@@ -16,7 +16,7 @@ s3client = boto3.client("s3", aws_access_key_id=aws_access_key_id,
 
 # Usando a novíssima Taskflow API
 default_args = {
-    'owner': 'Neylson Crepalde',
+    'owner': 'Julio Zeferino',
     "depends_on_past": False,
     "start_date": days_ago(2),
     "email": ["airflow@airflow.com"],
@@ -24,7 +24,12 @@ default_args = {
     "email_on_retry": False
 }
 
-@dag(default_args=default_args, schedule_interval=None, catchup=False, tags=["emr", "aws", "enem"], description="Pipeline para processamento de dados do ENEM 2019")
+@dag(
+    default_args=default_args, 
+    schedule_interval=None, 
+    catchup=False, 
+    tags=["emr", "aws", "enem"], 
+    description="Pipeline para processamento de dados do ENEM 2019")
 def pipeline_enem():
     """
     Pipeline para processamento de dados do ENEM 2019.
@@ -33,11 +38,11 @@ def pipeline_enem():
     @task
     def emr_process_enem_data():
         cluster_id = client.run_job_flow(
-            Name='EMR-Ney-IGTI',
+            Name='EMR-Julio-IGTI',
             ServiceRole='EMR_DefaultRole',
             JobFlowRole='EMR_EC2_DefaultRole',
             VisibleToAllUsers=True,
-            LogUri='s3://datalake-ney-igti-edc-tf/emr-logs',
+            LogUri='s3://julioszeferino-datalake-projeto01-tf/emr-logs',
             ReleaseLabel='emr-6.3.0',
             Instances={
                 'InstanceGroups': [
@@ -56,7 +61,7 @@ def pipeline_enem():
                         'InstanceCount': 1,
                     }
                 ],
-                'Ec2KeyName': 'ney-igti-teste',
+                'Ec2KeyName': 'julioszeferino-igti-teste',
                 'KeepJobFlowAliveWhenNoSteps': True,
                 'TerminationProtected': False,
                 'Ec2SubnetId': 'subnet-1df20360'
@@ -109,7 +114,7 @@ def pipeline_enem():
                             '--conf', 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog', 
                             '--master', 'yarn',
                             '--deploy-mode', 'cluster',
-                            's3://datalake-ney-igti-edc-tf/emr-code/pyspark/01_delta_spark_insert.py'
+                            's3://julioszeferino-datalake-projeto01-tf/emr-code/pyspark/delta_spark_insert.py'
                         ]
                 }
             }],
@@ -151,7 +156,7 @@ def pipeline_enem():
                                 '--conf', 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog', 
                                 '--master', 'yarn',
                                 '--deploy-mode', 'cluster',
-                                's3://datalake-ney-igti-edc-tf/emr-code/pyspark/02_delta_spark_upsert.py'
+                                's3://julioszeferino-datalake-projeto01-tf/emr-code/pyspark/delta_spark_upsert.py'
                             ]
                     }
                 }]
